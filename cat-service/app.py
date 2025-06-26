@@ -50,10 +50,14 @@ cats = [
     {"id": 3, "name": "Снежок", "description": "Пушистый и ласковый", "image": "/images/cat3.jpg"},
 ]
 
-# Маршрут для корня сайта — чтобы не было ошибки 404
+
 @app.route('/')
 def index():
     return "Добро пожаловать в Cat Service API! Используйте /api/cats или /api/comments"
+# Маршрут для корня сайта — чтобы не было ошибки 404
+@app.route('/')
+def serve_frontend():
+    return send_from_directory('frontend', 'index.html')
 
 # Маршрут для получения списка котов
 @app.route('/api/cats')
