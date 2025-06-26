@@ -51,9 +51,6 @@ cats = [
 ]
 
 
-@app.route('/')
-def index():
-    return "Добро пожаловать в Cat Service API! Используйте /api/cats или /api/comments"
 # Маршрут для корня сайта — чтобы не было ошибки 404
 @app.route('/')
 def serve_frontend():
