@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Мир котиков</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Мир котиков</h1>
+      <p>Самые милые и забавные котики в интернете!</p>
+    </header>
+    <main>
+      <section class="cats-gallery">
+        <div class="cat-card">
+          <img src="images/cat1.jpg" alt="Котик 1" />
+          <h3>Барсик</h3>
+          <p>Любит спать и мурлыкать на солнышке.</p>
+        </div>
+        <div class="cat-card">
+          <img src="images/cat2.jpg" alt="Котик 2" />
+          <h3>Мурка</h3>
+          <p>Обожает играть с клубками и ловить мышей.</p>
+        </div>
+        <div class="cat-card">
+          <img src="images/cat3.jpg" alt="Котик 3" />
+          <h3>Снежок</h3>
+          <p>Самый пушистый и ласковый котик на свете.</p>
+        </div>
+      </section>
+
+      <!-- Секция комментариев -->
+      <section id="comments-section">
+        <h2>Комментарии</h2>
+        <div id="comments-wall"></div>
+        <form id="comment-form">
+          <input type="text" id="user" placeholder="Ваше имя" required />
+          <input
+            type="text"
+            id="comment-text"
+            placeholder="Комментарий"
+            required
+          />
+          <button type="submit">Отправить</button>
+        </form>
+      </section>
+    </main>
+
+    <footer>&copy; 2025 Мир котиков. Все права защищены.</footer>
+
+    <!-- Подключение библиотеки Socket.IO -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
+    <!-- JavaScript код -->
+    <script>
+      // Установка соединения с сервером WebSocket
+      const socket = io("http://localhost:5000");
+
+      // Получение DOM-элементов
+      const commentsWall = document.getElementById("comments-wall");
+      const form = document.getElementById("comment-form");
+      const userInput = document.getElementById("user");
+      const commentInput = document.getElementById("comment-text");
+
+      // Функция добавления комментария на страницу
+      function addCommentToWall(data) {
+        // Создание карточки комментария
+        const card = document.createElement("div");
+        card.className = "comment-card";
+
+        // Элемент с именем пользователя
+        const userElem = document.createElement("div");
+        userElem.className = "comment-user";
+        userElem.textContent = data.user;
+
+        // Элемент с текстом комментария
+        const textElem = document.createElement("div");
+        textElem.className = "comment-text";
+        textElem.textContent = data.text;
+
+        // Элемент с временем комментария
+        const timeElem = document.createElement("div");
+        timeElem.className = "comment-time";
+        const date = new Date(data.timestamp);
+        timeElem.textContent = date.toLocaleString();
+
+        // Сборка карточки комментария
+        card.appendChild(userElem);
+        card.appendChild(textElem);
+        card.appendChild(timeElem);
+
+        // Добавление карточки в контейнер
+        commentsWall.appendChild(card);
+      }
+
+      // Загрузка существующих комментариев при загрузке страницы
+      fetch("http://localhost:5000/api/comments")
+        .then((res) => res.json()) // Преобразование ответа в JSON
+        .then((data) => {
+          // Добавление каждого комментария на страницу
+          data.forEach((comment) => addCommentToWall(comment));
+        });
+
+      // Обработчик новых комментариев через WebSocket
+      socket.on("comment_added", (data) => {
+        addCommentToWall(data); // Добавление нового комментария
+      });
+
+      // Обработчик отправки формы
+      form.addEventListener("submit", (e) => {
+        e.preventDefault(); // Отмена стандартного поведения формы
+        
+        // Сбор данных формы
+        const commentData = {
+          user: userInput.value.trim(), // Имя пользователя
+          text: commentInput.value.trim(), // Текст комментария
+        };
+        
+        // Проверка, что оба поля заполнены
+        if (commentData.user && commentData.text) {
+          socket.emit("new_comment", commentData);      // Отправка данных на сервер через WebSocket
+          commentInput.value = "";     // Очистка поля ввода комментария
+        }
+      });
+    </script>
+  </body>
+</html>
