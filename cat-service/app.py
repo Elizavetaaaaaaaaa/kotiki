@@ -45,10 +45,15 @@ with app.app_context():
 
 # Статические данные о котах
 cats = [
-    {"id": 1, "name": "Барсик", "description": "Любит спать и мурлыкать", "image": "/images/cat1.png"},
-    {"id": 2, "name": "Мурка", "description": "Обожает играть с клубками", "image": "/images/cat2.png"},
-    {"id": 3, "name": "Снежок", "description": "Пушистый и ласковый", "image": "/images/cat3.png"},
+    {"id": 1, "name": "Барсик", "description": "Любит спать и мурлыкать", "image": "/images/cat1.jpg"},
+    {"id": 2, "name": "Мурка", "description": "Обожает играть с клубками", "image": "/images/cat2.jpg"},
+    {"id": 3, "name": "Снежок", "description": "Пушистый и ласковый", "image": "/images/cat3.jpg"},
 ]
+
+# Маршрут для корня сайта — чтобы не было ошибки 404
+@app.route('/')
+def index():
+    return "Добро пожаловать в Cat Service API! Используйте /api/cats или /api/comments"
 
 # Маршрут для получения списка котов
 @app.route('/api/cats')
