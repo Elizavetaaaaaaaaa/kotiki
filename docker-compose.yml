@@ -1,0 +1,25 @@
+version: '3.8'
+
+# Определение сервисов (контейнеров) в нашем приложении
+services:
+ # Сервис backend (Flask приложение)
+  cat-service:
+    build:
+      context: ./cat-service
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./cat-service/data:/app/data  # Сохраняем базу данных между перезапусками
+    environment:
+      - SQLALCHEMY_DATABASE_URI=sqlite:///data/comments.db
+    restart: unless-stopped
+
+   # Сервис frontend
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - cat-service
+    restart: unless-stopped
