@@ -50,19 +50,6 @@ cats = [
     {"id": 3, "name": "Снежок", "description": "Пушистый и ласковый", "image": "/images/cat3.jpg"},
 ]
 
-# Абсолютный путь к папке frontend
-FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend'))
-
-@app.route('/')
-def serve_index():
-    return send_from_directory(FRONTEND_DIR, 'index.html')
-
-@app.route('/<path:path>')
-def serve_static(path):
-    # Отдаём статические файлы из frontend
-    return send_from_directory(FRONTEND_DIR, path)
-
-
 # Маршрут для получения списка котов
 @app.route('/api/cats')
 def get_cats():
